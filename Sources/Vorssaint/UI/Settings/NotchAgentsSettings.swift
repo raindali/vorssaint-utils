@@ -121,7 +121,7 @@ struct NotchAgentsSettingsControls: View {
             }
             switchRow("exclamationmark.triangle", text.limitAlert, isOn: $limitAlert)
             if limitAlert {
-                SettingsMenuRow(symbol: "gauge.with.dots.needle.67percent", title: text.limitAt, selection: $limitThreshold) {
+                SettingsMenuRow(symbol: "gauge", title: text.limitAt, selection: $limitThreshold) {
                     ForEach(NotchAgentSupport.limitThresholds, id: \.self) { value in
                         Text(text.usedShare(AgentFormat.percent(value / 100))).tag(value)
                     }
@@ -158,8 +158,8 @@ struct NotchAgentsSettingsControls: View {
             // An agent turned off is not read at all, not even for its status.
             if claude { findClaudeApp() }
         }
-        .onChange(of: claude) { _, on in if on { findClaudeApp() } }
-        .onChange(of: claudeProfile) { _, _ in
+        .onChangeCompat(of: claude) { _, on in if on { findClaudeApp() } }
+        .onChangeCompat(of: claudeProfile) { _, _ in
             claudeAppFileCheck = nil
             findRoots()
             if claude { findClaudeApp() }
@@ -167,7 +167,7 @@ struct NotchAgentsSettingsControls: View {
         }
         // Cards and agents set the page's height, and the live reading the
         // closed island's width, which the island follows.
-        .onChange(of: [cardOrder, hiddenCards, String(claude), String(codex), String(opencode), String(copilot),
+        .onChangeCompat(of: [cardOrder, hiddenCards, String(claude), String(codex), String(opencode), String(copilot),
                        String(cursor), String(liveActivity), readout, limitDisplay, limitFocus]) { _, _ in
             NotchService.shared.syncWithPreferences()
         }

@@ -43,7 +43,7 @@ struct FanControlSection: View {
                 .panelCard()
                 .onAppear { service.panelDidAppear() }
                 .onDisappear { service.panelDidDisappear() }
-                .onChange(of: resume) { _, _ in service.resumePreferenceDidChange() }
+                .onChangeCompat(of: resume) { _, _ in service.resumePreferenceDidChange() }
         }
     }
 
@@ -224,8 +224,7 @@ struct FanControlCardContent: View {
             Image(systemName: cooling ? "fanblades.fill" : "fanblades")
                 .font(.system(size: 17, weight: .semibold))
                 .foregroundStyle(cooling ? AnyShapeStyle(Color.cyan) : AnyShapeStyle(Color.secondary))
-                .symbolEffect(.variableColor.iterative, options: .repeating,
-                              isActive: cooling)
+                .symbolVariableColorCompat(isActive: cooling)
                 .frame(width: 24)
 
             VStack(alignment: .leading, spacing: 1) {

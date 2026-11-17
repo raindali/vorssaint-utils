@@ -350,7 +350,7 @@ final class Permissions: ObservableObject {
         requestingCalendar = true
         calendarRequestFailed = false
         let store = EKEventStore()
-        store.requestFullAccessToEvents { [weak self, store] _, error in
+        CalendarAccessCompat.requestFullAccess(store: store) { [weak self, store] _, error in
             _ = store
             DispatchQueue.main.async {
                 self?.calendarPermissionResolution = ProcessInfo.processInfo.systemUptime

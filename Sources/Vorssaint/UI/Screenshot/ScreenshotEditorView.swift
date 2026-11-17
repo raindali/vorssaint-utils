@@ -74,10 +74,10 @@ struct ScreenshotEditorView: View {
         .animation(.spring(response: 0.28, dampingFraction: 0.86), value: model.tool)
         .animation(.easeOut(duration: 0.16), value: model.annotationShadowsEnabled)
         .animation(.spring(response: 0.28, dampingFraction: 0.86), value: model.backdropStyle)
-        .onChange(of: model.tool) { old, new in
+        .onChangeCompat(of: model.tool) { old, new in
             if old == .expandCanvas, new != .expandCanvas { expansionDragZoom = nil }
         }
-        .onChange(of: model.expansionDraft) { _, draft in
+        .onChangeCompat(of: model.expansionDraft) { _, draft in
             if draft == nil, !model.expansionRejected { expansionDragZoom = nil }
         }
         .onAppear { keyboard.start() }
@@ -744,7 +744,7 @@ struct ScreenshotEditorView: View {
             ZStack(alignment: .topTrailing) {
                 Image(systemName: tool.screenshotSymbolName)
                     .font(.system(size: 13.5, weight: .medium))
-                    .symbolEffect(.bounce, value: isActive)
+                    .symbolBounceCompat(value: isActive)
                     .frame(width: 33, height: height)
                 if let shortcutLabel {
                     Text(shortcutLabel)
@@ -1130,12 +1130,12 @@ struct ScreenshotEditorView: View {
             // The choices name themselves; the label stays for VoiceOver.
             .labelsHidden()
             .fixedSize()
-            .onChange(of: expansionFillChoice) { _, _ in updateExpansionFill() }
+            .onChangeCompat(of: expansionFillChoice) { _, _ in updateExpansionFill() }
             if expansionFillChoice == 2 {
                 // The fill picker beside it already names the custom color.
                 ColorPicker(strings.canvasFillCustom, selection: $expansionCustomColor, supportsOpacity: false)
                     .labelsHidden()
-                    .onChange(of: expansionCustomColor) { _, _ in updateExpansionFill() }
+                    .onChangeCompat(of: expansionCustomColor) { _, _ in updateExpansionFill() }
             }
             let size = model.expansionDraft?.size ?? model.imageSize
             Text("\(Int(size.width)) × \(Int(size.height)) px")

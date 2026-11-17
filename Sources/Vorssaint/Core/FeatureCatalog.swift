@@ -142,7 +142,7 @@ extension AppFeature {
         case .focusFollowsMouse: return "cursorarrow.and.square.on.square.dashed"
         case .smoothScroll: return "cursorarrow.motionlines"
         case .linearScroll: return "arrow.up.and.down.text.horizontal"
-        case .scrollSpeed: return "gauge.with.dots.needle.67percent"
+        case .scrollSpeed: return "gauge"
         case .mouseAcceleration: return "cursorarrow.rays"
         case .mouseNavigation: return "arrow.left.arrow.right"
         case .mouseButtonShortcuts: return "button.programmable"
