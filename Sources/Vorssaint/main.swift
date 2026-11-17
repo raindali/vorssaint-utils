@@ -2,6 +2,7 @@
 // Copyright (C) 2026 Vorssaint
 
 import AppKit
+import EventKit
 
 // Select backup mode before cleanup and diagnostic arguments can act. Invalid
 // backup commands must leave files, input mappings and recovery journals alone.
@@ -65,7 +66,10 @@ if CommandLine.arguments.contains("--permissions-test") {
     _ = NSApplication.shared
     let ax = AXIsProcessTrusted()
     let screen = CGPreflightScreenCaptureAccess()
-    let result = "accessibility=\(ax) screenRecording=\(screen)"
+    let calendar = CalendarAccessCompat.currentIsGranted
+    let calendarStatus = EKEventStore.authorizationStatus(for: .event).rawValue
+    let result = "accessibility=\(ax) screenRecording=\(screen) "
+        + "calendar=\(calendar) calendarStatus=\(calendarStatus)"
     try? result.write(toFile: "/tmp/vorssaint-permissions-test.txt", atomically: true, encoding: .utf8)
     print(result)
     exit(0)
