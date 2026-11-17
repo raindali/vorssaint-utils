@@ -43,7 +43,7 @@ struct QuickToolsSettings: View {
                         .font(.caption)
                         .foregroundStyle(.tertiary)
                     Toggle(l10n.s.quickToolShortcutToggle, isOn: $launcherShortcutEnabled)
-                        .onChange(of: launcherShortcutEnabled) { _, _ in
+                        .onChangeCompat(of: launcherShortcutEnabled) { _, _ in
                             QuickLauncherService.shared.syncWithPreferences()
                         }
                     ShortcutPreferenceRow(role: .quickLauncher,
@@ -114,7 +114,7 @@ struct QuickToolsSettings: View {
                     QuitAllExceptionsList()
                     Toggle("\(l10n.s.quickToolShortcutToggle): \(FeatureStrings.quickToggles(l10n.language).quitAllTitle)",
                            isOn: $quitAllShortcutEnabled)
-                        .onChange(of: quitAllShortcutEnabled) { _, _ in
+                        .onChangeCompat(of: quitAllShortcutEnabled) { _, _ in
                             QuickTogglesService.shared.syncWithPreferences()
                         }
                     ShortcutPreferenceRow(role: .quitAll,
@@ -128,7 +128,7 @@ struct QuickToolsSettings: View {
                     }
                     Toggle("\(l10n.s.quickToolShortcutToggle): \(FeatureStrings.quickToggles(l10n.language).quitOthersTitle)",
                            isOn: $quitOthersShortcutEnabled)
-                        .onChange(of: quitOthersShortcutEnabled) { _, _ in
+                        .onChangeCompat(of: quitOthersShortcutEnabled) { _, _ in
                             QuickTogglesService.shared.syncWithPreferences()
                         }
                     ShortcutPreferenceRow(role: .quitAllExceptFront,
@@ -170,7 +170,7 @@ struct QuickToolsSettings: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                     Toggle(l10n.s.quickToolShortcutToggle, isOn: $micShortcutEnabled)
-                        .onChange(of: micShortcutEnabled) { _, _ in
+                        .onChangeCompat(of: micShortcutEnabled) { _, _ in
                             MicMuteService.shared.syncWithPreferences()
                         }
                     ShortcutPreferenceRow(role: .micMute,
@@ -200,7 +200,7 @@ struct QuickToolsSettings: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                     Toggle(l10n.s.quickToolShortcutToggle, isOn: $cameraShortcutEnabled)
-                        .onChange(of: cameraShortcutEnabled) { _, _ in
+                        .onChangeCompat(of: cameraShortcutEnabled) { _, _ in
                             CameraPreviewService.shared.syncWithPreferences()
                         }
                     ShortcutPreferenceRow(role: .cameraPreview,
@@ -267,7 +267,7 @@ struct QuickToolsSettings: View {
                         .foregroundStyle(.secondary)
                     Toggle(FeatureStrings.scratchpad(l10n.language).closeOnClickOutside,
                            isOn: $scratchpadCloseOnClickOutside)
-                        .onChange(of: scratchpadCloseOnClickOutside) { _, _ in
+                        .onChangeCompat(of: scratchpadCloseOnClickOutside) { _, _ in
                             ScratchpadService.shared.outsideClickPreferenceDidChange()
                         }
                     VStack(alignment: .leading, spacing: 6) {
@@ -296,7 +296,7 @@ struct QuickToolsSettings: View {
                         .foregroundStyle(.secondary)
                     }
                     Toggle(l10n.s.quickToolShortcutToggle, isOn: $scratchpadShortcutEnabled)
-                        .onChange(of: scratchpadShortcutEnabled) { _, _ in
+                        .onChangeCompat(of: scratchpadShortcutEnabled) { _, _ in
                             ScratchpadService.shared.syncWithPreferences()
                         }
                     ShortcutPreferenceRow(role: .scratchpad,

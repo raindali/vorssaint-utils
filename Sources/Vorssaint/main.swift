@@ -22,6 +22,29 @@ if CommandLine.arguments.contains("--selftest") {
 if CommandLine.arguments.contains("--sensors") {
     SensorDump.runAndExit()
 }
+if CommandLine.arguments.contains("--capture-test") {
+    Task {
+        let result = await MacOS13Diagnostics.captureMainDisplay()
+        print(result)
+        exit(result.hasPrefix("capture ") ? 0 : 1)
+    }
+    RunLoop.main.run()
+}
+if CommandLine.arguments.contains("--clipboard-test") {
+    FeatureRuntime.shared.syncAtLaunch()
+    let pasteboard = NSPasteboard.general
+    pasteboard.clearContents()
+    pasteboard.setString("vorssaint-clipboard-test", forType: .string)
+    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+        let path = PrivateFileStore.containerURL?
+            .appendingPathComponent("ClipboardHistory.json").path ?? "-"
+        print("clipboard running=\(ClipboardHistoryService.shared.isRunning) "
+              + "entries=\(ClipboardHistoryService.shared.entries.count) "
+              + "store=\(path) exists=\(FileManager.default.fileExists(atPath: path))")
+        exit(0)
+    }
+    RunLoop.main.run()
+}
 if CommandLine.arguments.contains("--uninstall") {
     Uninstaller.runAndExit()
 }

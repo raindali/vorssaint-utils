@@ -27,7 +27,7 @@ final class SmoothScrollService: ObservableObject {
 
     private var tap: CFMachPort?
     private var runLoopSource: CFRunLoopSource?
-    private var displayLink: CADisplayLink?
+    private var displayLink: CompatDisplayLink?
     private var frameTimer: Timer?
     private var schedulerDisplayID: CGDirectDisplayID?
     private var screenObserver: NSObjectProtocol?
@@ -452,7 +452,8 @@ final class SmoothScrollService: ObservableObject {
 
         stopFrameScheduler()
         if let screen, let displayID {
-            let displayLink = screen.displayLink(
+            let displayLink = CompatDisplayLink(
+                screen: screen,
                 target: self,
                 selector: #selector(displayLinkDidFire(_:))
             )
@@ -490,7 +491,7 @@ final class SmoothScrollService: ObservableObject {
         lastFrameTimestamp = nil
     }
 
-    @objc private func displayLinkDidFire(_ sender: CADisplayLink) {
+    @objc private func displayLinkDidFire(_ sender: CompatDisplayLink) {
         guard let displayLink, sender === displayLink else { return }
         let firstElapsed = sender.duration > 0 ? sender.duration : SmoothScrollSupport.frameInterval
         emitFrame(at: sender.timestamp, firstElapsed: firstElapsed)

@@ -48,8 +48,8 @@ struct FeatureHubSettings: View {
                     refreshNeverUsed()
                     revealPendingFeatureTarget(using: proxy)
                 }
-                .onChange(of: router.requestID) { _, _ in revealPendingFeatureTarget(using: proxy) }
-                .onChange(of: features.revision) { _, _ in refreshNeverUsed() }
+                .onChangeCompat(of: router.requestID) { _, _ in revealPendingFeatureTarget(using: proxy) }
+                .onChangeCompat(of: features.revision) { _, _ in refreshNeverUsed() }
         }
     }
 
@@ -946,7 +946,7 @@ struct PermissionsPortalSections: View {
             case .unknown: return .unknown
             }
         case .calendar:
-            return permissions.calendarAccess == .fullAccess ? .granted : .missing
+            return CalendarAccessCompat.isGranted(permissions.calendarAccess) ? .granted : .missing
         case .camera:
             switch permissions.camera {
             case .granted: return .granted
@@ -1074,8 +1074,7 @@ private struct PermissionPortalRow: View {
         switch permission {
         case .accessibility, .screenRecording, .fullDiskAccess: return true
         case .notifications: return Permissions.shared.notifications == .undetermined
-        case .calendar: return Permissions.shared.calendarAccess == .notDetermined
-            || Permissions.shared.calendarAccess == .writeOnly
+        case .calendar: return CalendarAccessCompat.needsRequest(Permissions.shared.calendarAccess)
         case .camera: return Permissions.shared.camera == .undetermined
         case .microphone: return Permissions.shared.microphone == .undetermined
         case .filesAndFolders, .automationFinder, .automationPlayback, .audioCapture,

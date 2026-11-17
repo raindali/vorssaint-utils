@@ -48,10 +48,10 @@ struct PanelHomebrewView: View {
                 homebrew.refreshInstalled()
             }
         }
-        .onChange(of: query) { _, _ in resetContextSelection() }
-        .onChange(of: mode) { _, _ in resetContextSelection() }
-        .onChange(of: filter) { _, _ in resetContextSelection() }
-        .onChange(of: searchKind) { _, _ in resetContextSelection() }
+        .onChangeCompat(of: query) { _, _ in resetContextSelection() }
+        .onChangeCompat(of: mode) { _, _ in resetContextSelection() }
+        .onChangeCompat(of: filter) { _, _ in resetContextSelection() }
+        .onChangeCompat(of: searchKind) { _, _ in resetContextSelection() }
         .onDisappear {
             PanelInteractionState.shared.isPresentingPopoverModal = false
         }
@@ -321,7 +321,7 @@ struct PanelHomebrewView: View {
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                     }
-                    .onChange(of: homebrew.operationStatus?.result) { _, result in
+                    .onChangeCompat(of: homebrew.operationStatus?.result) { _, result in
                         guard result == .succeeded,
                               homebrew.operationStatus?.action.clearsSelectionOnSuccess == true else { return }
                         proxy.scrollTo(Self.packageListTopID, anchor: .top)

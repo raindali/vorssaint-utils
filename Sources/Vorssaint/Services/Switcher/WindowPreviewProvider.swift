@@ -183,7 +183,7 @@ final class WindowPreviewProvider {
 
                 let filter = SCContentFilter(desktopIndependentWindow: scWindow)
                 guard let image = await Self.windowServerCaptures.perform({
-                    try? await SCScreenshotManager.captureImage(contentFilter: filter, configuration: configuration)
+                    await ScreenshotCompat.captureImage(contentFilter: filter, configuration: configuration)
                 }) else { continue }
                 guard !Task.isCancelled else { return }
 

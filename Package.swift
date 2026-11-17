@@ -6,7 +6,7 @@ import PackageDescription
 
 let package = Package(
     name: "Vorssaint",
-    platforms: [.macOS(.v14)],
+    platforms: [.macOS("13.3")],
     targets: [
         .systemLibrary(
             name: "CoreAudioTapCompat",

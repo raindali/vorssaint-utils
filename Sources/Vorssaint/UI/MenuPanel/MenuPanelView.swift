@@ -129,18 +129,18 @@ struct MenuPanelView: View {
                 SystemMonitor.shared.setMenuPanelNeeds(.none)
             }
         }
-        .onChange(of: monitorNeeds) { _, _ in
+        .onChangeCompat(of: monitorNeeds) { _, _ in
             syncMonitorSampling()
         }
-        .onChange(of: updates.state) { _, state in
+        .onChangeCompat(of: updates.state) { _, state in
             if !state.showsMenuPanelBanner {
                 updateBannerHeight = 0
             }
         }
-        .onChange(of: panelFocus.request) { _, request in
+        .onChangeCompat(of: panelFocus.request) { _, request in
             applyFocus(request)
         }
-        .onChange(of: focusedSection) { _, section in
+        .onChangeCompat(of: focusedSection) { _, section in
             if let section { selectedSection = section }
         }
     }
@@ -688,10 +688,10 @@ struct UtilitiesSection: View {
                 }
             }
         }
-        .onChange(of: hostedUtilityKeepsPopoverOpen) { _, keepsOpen in
+        .onChangeCompat(of: hostedUtilityKeepsPopoverOpen) { _, keepsOpen in
             PanelInteractionState.shared.viewKeepsPopoverOpen = keepsOpen
         }
-        .onChange(of: hostedSettingsPage) { _, page in
+        .onChangeCompat(of: hostedSettingsPage) { _, page in
             PanelInteractionState.shared.hostedSettingsPage = page
         }
         .onDisappear {
@@ -1463,7 +1463,7 @@ struct QuickControlsSection: View {
                            needsAttention: scrollDirectionEnabled && !permissions.accessibility,
                            permissionButtonTitle: l10n.s.permissionRequest,
                            permissionAction: accessibilityPermissionAction(scrollDirectionEnabled))
-                .onChange(of: scrollDirectionEnabled) { _, enabled in
+                .onChangeCompat(of: scrollDirectionEnabled) { _, enabled in
                     ScrollInverter.shared.syncWithPreferences()
                     requestAccessibilityIfNeeded(enabled)
                 }
@@ -1479,7 +1479,7 @@ struct QuickControlsSection: View {
                            needsAttention: smoothScrollEnabled && !permissions.accessibility,
                            permissionButtonTitle: l10n.s.permissionRequest,
                            permissionAction: accessibilityPermissionAction(smoothScrollEnabled))
-                .onChange(of: smoothScrollEnabled) { _, enabled in
+                .onChangeCompat(of: smoothScrollEnabled) { _, enabled in
                     SmoothScrollService.shared.syncWithPreferences()
                     requestAccessibilityIfNeeded(enabled)
                 }
@@ -1495,7 +1495,7 @@ struct QuickControlsSection: View {
                            needsAttention: linearScrollEnabled && !permissions.accessibility,
                            permissionButtonTitle: l10n.s.permissionRequest,
                            permissionAction: accessibilityPermissionAction(linearScrollEnabled))
-                .onChange(of: linearScrollEnabled) { _, enabled in
+                .onChangeCompat(of: linearScrollEnabled) { _, enabled in
                     ScrollInverter.shared.syncWithPreferences()
                     requestAccessibilityIfNeeded(enabled)
                 }
@@ -1511,7 +1511,7 @@ struct QuickControlsSection: View {
                            needsAttention: focusFollowsMouseEnabled && !permissions.accessibility,
                            permissionButtonTitle: l10n.s.permissionRequest,
                            permissionAction: accessibilityPermissionAction(focusFollowsMouseEnabled))
-                .onChange(of: focusFollowsMouseEnabled) { _, enabled in
+                .onChangeCompat(of: focusFollowsMouseEnabled) { _, enabled in
                     FocusFollowsMouseService.shared.syncWithPreferences()
                     requestAccessibilityIfNeeded(enabled)
                 }
@@ -1527,7 +1527,7 @@ struct QuickControlsSection: View {
                            needsAttention: mouseNavigationEnabled && !permissions.accessibility,
                            permissionButtonTitle: l10n.s.permissionRequest,
                            permissionAction: accessibilityPermissionAction(mouseNavigationEnabled))
-                .onChange(of: mouseNavigationEnabled) { _, enabled in
+                .onChangeCompat(of: mouseNavigationEnabled) { _, enabled in
                     MouseNavigationService.shared.syncWithPreferences()
                     requestAccessibilityIfNeeded(enabled)
                 }
@@ -1544,7 +1544,7 @@ struct QuickControlsSection: View {
                                    || (switcherNeedsScreenRecording && !permissions.screenRecording)),
                                permissionButtonTitle: l10n.s.permissionRequest,
                                permissionAction: switcherPermissionAction)
-                    .onChange(of: switcherEnabled) { _, enabled in
+                    .onChangeCompat(of: switcherEnabled) { _, enabled in
                         AppSwitcher.shared.syncWithPreferences()
                         guard enabled else { return }
                         if !permissions.accessibility {
@@ -1569,7 +1569,7 @@ struct QuickControlsSection: View {
                                needsAttention: keyDebounceEnabled && !permissions.accessibility,
                                permissionButtonTitle: l10n.s.permissionRequest,
                                permissionAction: accessibilityPermissionAction(keyDebounceEnabled))
-                    .onChange(of: keyDebounceEnabled) { _, enabled in
+                    .onChangeCompat(of: keyDebounceEnabled) { _, enabled in
                         KeyboardDebounceService.shared.syncWithPreferences()
                         requestAccessibilityIfNeeded(enabled)
                     }
@@ -1588,7 +1588,7 @@ struct QuickControlsSection: View {
                            needsAttention: cutPasteEnabled && !permissions.accessibility,
                            permissionButtonTitle: l10n.s.permissionRequest,
                            permissionAction: accessibilityPermissionAction(cutPasteEnabled))
-                .onChange(of: cutPasteEnabled) { _, enabled in
+                .onChangeCompat(of: cutPasteEnabled) { _, enabled in
                     FinderCutPaste.shared.syncWithPreferences()
                     requestAccessibilityIfNeeded(enabled)
                 }
@@ -1603,7 +1603,7 @@ struct QuickControlsSection: View {
                            needsAttention: autoQuitEnabled && !permissions.accessibility,
                            permissionButtonTitle: l10n.s.permissionRequest,
                            permissionAction: accessibilityPermissionAction(autoQuitEnabled))
-                .onChange(of: autoQuitEnabled) { _, enabled in
+                .onChangeCompat(of: autoQuitEnabled) { _, enabled in
                     AutoQuitService.shared.syncWithPreferences()
                     requestAccessibilityIfNeeded(enabled)
                 }
@@ -1621,7 +1621,7 @@ struct QuickControlsSection: View {
                                appDelegate()?.closePopover()
                                ShelfService.shared.expandDocked()
                            })
-                .onChange(of: shelfEnabled) { _, _ in
+                .onChangeCompat(of: shelfEnabled) { _, _ in
                     ShelfService.shared.syncWithPreferences()
                 }
         case .windowMaximize:
@@ -1635,7 +1635,7 @@ struct QuickControlsSection: View {
                            needsAttention: windowMaximizeEnabled && !permissions.accessibility,
                            permissionButtonTitle: l10n.s.permissionRequest,
                            permissionAction: accessibilityPermissionAction(windowMaximizeEnabled))
-                .onChange(of: windowMaximizeEnabled) { _, enabled in
+                .onChangeCompat(of: windowMaximizeEnabled) { _, enabled in
                     WindowMaximizer.shared.syncWithPreferences()
                     requestAccessibilityIfNeeded(enabled)
                 }
@@ -1650,7 +1650,7 @@ struct QuickControlsSection: View {
                            needsAttention: dockPreviewEnabled && dockPreviewNeedsAttention,
                            permissionButtonTitle: l10n.s.permissionRequest,
                            permissionAction: dockPreviewPermissionAction)
-                .onChange(of: dockPreviewEnabled) { _, enabled in
+                .onChangeCompat(of: dockPreviewEnabled) { _, enabled in
                     DockPreviewService.shared.syncWithPreferences()
                     guard enabled else { return }
                     if !permissions.accessibility {
@@ -1670,7 +1670,7 @@ struct QuickControlsSection: View {
                            needsAttention: dockClickEnabled && !permissions.accessibility,
                            permissionButtonTitle: l10n.s.permissionRequest,
                            permissionAction: accessibilityPermissionAction(dockClickEnabled))
-                .onChange(of: dockClickEnabled) { _, enabled in
+                .onChangeCompat(of: dockClickEnabled) { _, enabled in
                     if enabled { dockClickHideEnabled = false }
                     DockClickService.shared.syncWithPreferences()
                     requestAccessibilityIfNeeded(enabled)
@@ -1686,7 +1686,7 @@ struct QuickControlsSection: View {
                            needsAttention: dockClickHideEnabled && !permissions.accessibility,
                            permissionButtonTitle: l10n.s.permissionRequest,
                            permissionAction: accessibilityPermissionAction(dockClickHideEnabled))
-                .onChange(of: dockClickHideEnabled) { _, enabled in
+                .onChangeCompat(of: dockClickHideEnabled) { _, enabled in
                     if enabled { dockClickEnabled = false }
                     DockClickService.shared.syncWithPreferences()
                     requestAccessibilityIfNeeded(enabled)
@@ -1702,7 +1702,7 @@ struct QuickControlsSection: View {
                            needsAttention: dockClickCycleEnabled && !permissions.accessibility,
                            permissionButtonTitle: l10n.s.permissionRequest,
                            permissionAction: accessibilityPermissionAction(dockClickCycleEnabled))
-                .onChange(of: dockClickCycleEnabled) { _, enabled in
+                .onChangeCompat(of: dockClickCycleEnabled) { _, enabled in
                     DockClickService.shared.syncWithPreferences()
                     requestAccessibilityIfNeeded(enabled)
                 }
@@ -1718,7 +1718,7 @@ struct QuickControlsSection: View {
                                && (!permissions.accessibility || middleClick.touchDeviceMissing),
                            permissionButtonTitle: l10n.s.permissionRequest,
                            permissionAction: accessibilityPermissionAction(middleClickEnabled))
-                .onChange(of: middleClickEnabled) { _, enabled in
+                .onChangeCompat(of: middleClickEnabled) { _, enabled in
                     MiddleClickService.shared.syncWithPreferences()
                     requestAccessibilityIfNeeded(enabled)
                 }
@@ -1739,7 +1739,7 @@ struct QuickControlsSection: View {
                                SettingsRouter.shared.page = .textSnippets
                                appDelegate()?.openSettingsWindow()
                            })
-                .onChange(of: textSnippetsEnabled) { _, enabled in
+                .onChangeCompat(of: textSnippetsEnabled) { _, enabled in
                     TextSnippetService.shared.syncWithPreferences()
                     requestAccessibilityIfNeeded(enabled)
                 }
@@ -1757,7 +1757,7 @@ struct QuickControlsSection: View {
                                SettingsRouter.shared.page = .notch
                                appDelegate()?.openSettingsWindow()
                            })
-                .onChange(of: notchEnabled) { _, _ in
+                .onChangeCompat(of: notchEnabled) { _, _ in
                     NotchService.shared.syncWithPreferences()
                 }
         case .radialMenu:
@@ -1786,7 +1786,7 @@ struct QuickControlsSection: View {
                                SettingsRouter.shared.page = .radialMenu
                                appDelegate()?.openSettingsWindow()
                            })
-                .onChange(of: radialMenuEnabled) { _, enabled in
+                .onChangeCompat(of: radialMenuEnabled) { _, enabled in
                     RadialMenuService.shared.syncWithPreferences()
                     if needsAccessibility {
                         requestAccessibilityIfNeeded(enabled)
@@ -1815,7 +1815,7 @@ struct QuickControlsSection: View {
                                SettingsRouter.shared.page = .mouse
                                appDelegate()?.openSettingsWindow()
                            })
-                .onChange(of: mouseButtonShortcutsEnabled) { _, enabled in
+                .onChangeCompat(of: mouseButtonShortcutsEnabled) { _, enabled in
                     MouseButtonShortcutService.shared.syncWithPreferences()
                     requestAccessibilityIfNeeded(enabled)
                 }
@@ -1854,7 +1854,7 @@ struct QuickControlsSection: View {
                                SettingsRouter.shared.page = .superKey
                                appDelegate()?.openSettingsWindow()
                            })
-                .onChange(of: superKeyEnabled) { _, enabled in
+                .onChangeCompat(of: superKeyEnabled) { _, enabled in
                     SuperKeyService.shared.syncWithPreferences()
                     requestAccessibilityIfNeeded(enabled)
                 }
@@ -1866,7 +1866,7 @@ struct QuickControlsSection: View {
                            isEditing: editing,
                            showsDragHandle: true,
                            visibility: $showMouseAcceleration)
-                .onChange(of: mouseAccelerationDisabled) { _, _ in
+                .onChangeCompat(of: mouseAccelerationDisabled) { _, _ in
                     MouseAccelerationService.shared.syncWithPreferences()
                 }
         case .spacesOrder:
@@ -1877,7 +1877,7 @@ struct QuickControlsSection: View {
                            isEditing: editing,
                            showsDragHandle: true,
                            visibility: $showSpacesOrder)
-                .onChange(of: spacesOrderEnabled) { _, _ in
+                .onChangeCompat(of: spacesOrderEnabled) { _, _ in
                     SpacesOrderHold.shared.syncWithPreferences()
                 }
         case .mouseClickDebounce:
@@ -1893,7 +1893,7 @@ struct QuickControlsSection: View {
                            needsAttention: mouseClickDebounceEnabled && !permissions.accessibility,
                            permissionButtonTitle: l10n.s.permissionRequest,
                            permissionAction: accessibilityPermissionAction(mouseClickDebounceEnabled))
-                .onChange(of: mouseClickDebounceEnabled) { _, enabled in
+                .onChangeCompat(of: mouseClickDebounceEnabled) { _, enabled in
                     MouseClickDebounceService.shared.syncWithPreferences()
                     requestAccessibilityIfNeeded(enabled)
                 }
@@ -2027,7 +2027,7 @@ struct QuickControlsSection: View {
                 .controlSize(.mini)
                 .disabled(switcherSimpleMode)
                 .accessibilityHint(l10n.s.switcherIconRowModeCaption)
-                .onChange(of: switcherIconRowMode) { _, _ in
+                .onChangeCompat(of: switcherIconRowMode) { _, _ in
                     AppSwitcher.shared.syncWithPreferences()
                 }
         }

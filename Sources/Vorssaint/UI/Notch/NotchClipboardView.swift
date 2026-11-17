@@ -90,14 +90,14 @@ struct NotchClipboardView: View {
                         }
                     }
                     .scrollIndicators(.automatic)
-                    .coordinateSpace(.named(Self.listSpace))
-                    .onChange(of: highlightedID) { previous, id in
+                    .coordinateSpaceNamedCompat(Self.listSpace)
+                    .onChangeCompat(of: highlightedID) { previous, id in
                         guard let id else { return }
                         follow(id, from: previous, in: proxy)
                     }
                     // A copied recent entry moves to the top, so the list
                     // follows it and the tick stays in view.
-                    .onChange(of: copiedID) { _, id in
+                    .onChangeCompat(of: copiedID) { _, id in
                         guard let id else { return }
                         withAnimation(reduceMotion ? nil : .easeOut(duration: 0.15)) { proxy.scrollTo(id) }
                     }
@@ -114,7 +114,7 @@ struct NotchClipboardView: View {
         }, trailing: {
             HStack(spacing: 6) { NotchClipboardHeaderActions(service: service) }
         })
-        .onChange(of: query) { _, query in queryChanged(query) }
+        .onChangeCompat(of: query) { _, query in queryChanged(query) }
         // Resting on an entry with the arrow keys opens it, as resting the pointer does.
         .task(id: highlightedID) {
             keyExpandedID = nil
@@ -130,14 +130,14 @@ struct NotchClipboardView: View {
             }
         }
         .onAppear(perform: appeared)
-        .onChange(of: service.clipboardSearchRequest) { _, _ in if !preview { openSearch() } }
-        .onChange(of: pinnedOnly) { _, _ in highlightedID = searchHighlight(keeping: nil) }
-        .onChange(of: searchOpen) { _, open in
+        .onChangeCompat(of: service.clipboardSearchRequest) { _, _ in if !preview { openSearch() } }
+        .onChangeCompat(of: pinnedOnly) { _, _ in highlightedID = searchHighlight(keeping: nil) }
+        .onChangeCompat(of: searchOpen) { _, open in
             guard !preview else { return }
             // Escape closes the search before it closes the island.
             service.setPageLayer(.clipboard, close: open ? { closeSearch() } : nil)
         }
-        .onChange(of: searching) { _, focused in
+        .onChangeCompat(of: searching) { _, focused in
             // A field left empty has nothing to keep open.
             if !focused, query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { searchOpen = false }
         }
@@ -147,8 +147,8 @@ struct NotchClipboardView: View {
             if !preview { service.setPageLayer(.clipboard, close: nil) }
         }
         // A row that leaves the list hands the highlight on, as a new search does.
-        .onChange(of: entries.map(\.id)) { _, _ in highlightedID = searchHighlight(keeping: highlightedID) }
-        .onChange(of: service.clipboardPastePress) { _, press in
+        .onChangeCompat(of: entries.map(\.id)) { _, _ in highlightedID = searchHighlight(keeping: highlightedID) }
+        .onChangeCompat(of: service.clipboardPastePress) { _, press in
             guard let press, !preview else { return }
             guard entries.indices.contains(press.index) else {
                 NSSound.beep()
@@ -244,7 +244,7 @@ struct NotchClipboardView: View {
     /// they still leave almost a point.
     private func openCard(_ entry: ClipboardHistoryEntry, place: Int) -> some View {
         GeometryReader { proxy in
-            let visible = proxy.bounds(of: .named(Self.listSpace))?.height ?? size.height
+            let visible = proxy.boundsCompat(of: Self.listSpace)?.height ?? size.height
             let height = min(openHeight(entry), visible)
             card(entry, lifted: true) { expandedCard(entry, place: place) }
                 .frame(height: height)

@@ -206,8 +206,8 @@ struct SettingsView: View {
             ensureVisiblePage()
             expandSelectedSection()
         }
-        .onChange(of: features.revision) { _, _ in ensureVisiblePage() }
-        .onChange(of: hasSearchQuery) { _, searching in
+        .onChangeCompat(of: features.revision) { _, _ in ensureVisiblePage() }
+        .onChangeCompat(of: hasSearchQuery) { _, searching in
             searchState = searching ? .current : nil
         }
         .onReceive(NotificationCenter.default.publisher(for: UserDefaults.didChangeNotification)
@@ -215,10 +215,10 @@ struct SettingsView: View {
             .receive(on: RunLoop.main)) { _ in
                 if hasSearchQuery { searchState = .current }
             }
-        .onChange(of: searchResults, initial: true) { previous, current in
+        .onChangeCompat(of: searchResults, initial: true) { previous, current in
             updateSearchSelection(previous: previous, current: current)
         }
-        .onChange(of: router.requestID) { _, _ in
+        .onChangeCompat(of: router.requestID) { _, _ in
             searchQuery = ""
             activeSearchIndex = nil
             ensureVisiblePage()
@@ -287,8 +287,8 @@ struct SettingsView: View {
                 }
             }
             .listStyle(.sidebar)
-            .onChange(of: sidebarPick) { _, selectedID in routeSidebarPick(selectedID) }
-            .onChange(of: activeSearchIndex) { _, index in
+            .onChangeCompat(of: sidebarPick) { _, selectedID in routeSidebarPick(selectedID) }
+            .onChangeCompat(of: activeSearchIndex) { _, index in
                 guard let index, searchResults.items.indices.contains(index) else { return }
                 let id = searchResults.items[index].id
                 if NSWorkspace.shared.accessibilityDisplayShouldReduceMotion {
@@ -297,7 +297,7 @@ struct SettingsView: View {
                     withAnimation(.easeInOut(duration: 0.2)) { proxy.scrollTo(id) }
                 }
             }
-            .onChange(of: hasSearchQuery) { _, searching in
+            .onChangeCompat(of: hasSearchQuery) { _, searching in
                 // The list stays in place across a search so the field keeps
                 // focus, which also keeps the results' scroll offset. Centering
                 // the chosen tool brings it back into view; near the top, the
@@ -307,7 +307,7 @@ struct SettingsView: View {
                 expandSelectedSection()
                 DispatchQueue.main.async { scrollSidebarToSelection(proxy) }
             }
-            .onChange(of: router.requestID) { _, _ in
+            .onChangeCompat(of: router.requestID) { _, _ in
                 // A click in the sidebar is already visible. Only external
                 // routes need to reveal and scroll to their destination.
                 let fromSidebar = navigationFromSidebar
@@ -636,13 +636,13 @@ struct UpdatesView: View {
     var body: some View {
         Section(l10n.s.updatesSection) {
             Toggle(l10n.s.autoCheckToggle, isOn: $autoCheck)
-                .onChange(of: autoCheck) { _, value in
+                .onChangeCompat(of: autoCheck) { _, value in
                     UpdateService.shared.autoCheckEnabled = value
                 }
 
             VStack(alignment: .leading, spacing: 4) {
                 Toggle(l10n.s.includeBetaUpdatesToggle, isOn: $includeBetas)
-                    .onChange(of: includeBetas) { _, value in
+                    .onChangeCompat(of: includeBetas) { _, value in
                         UpdateService.shared.includeBetaUpdates = value
                     }
                 SettingsCaptionText(l10n.s.includeBetaUpdatesCaption)
@@ -1208,7 +1208,7 @@ private struct SecureInputObservation: ViewModifier {
         content
             .onAppear { SecureInputMonitor.shared.setObservingSurface(demandID, visible: isActive) }
             .onDisappear { SecureInputMonitor.shared.setObservingSurface(demandID, visible: false) }
-            .onChange(of: isActive) { _, active in
+            .onChangeCompat(of: isActive) { _, active in
                 SecureInputMonitor.shared.setObservingSurface(demandID, visible: active)
             }
     }

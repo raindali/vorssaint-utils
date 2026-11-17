@@ -60,7 +60,7 @@ struct NetworkSection: View {
         .onReceive(monitor.$snapshot) { _ in
             refreshAppRows(force: false, delay: 0.2)
         }
-        .onChange(of: netApps) { _, visible in
+        .onChangeCompat(of: netApps) { _, visible in
             if visible {
                 startNetworkMonitoringIfNeeded()
                 refreshAppRows(force: true, delay: 0.2)
@@ -292,7 +292,7 @@ struct NetworkSection: View {
     private func speedTestRow(editing: Bool) -> some View {
         if !netTest {
             PanelHiddenItemRow(title: l10n.s.monitorItemNetTest,
-                               systemImage: "gauge.with.dots.needle.67percent",
+                               systemImage: "gauge",
                                isVisible: $netTest)
         } else {
             VStack(alignment: .leading, spacing: 6) {
@@ -307,7 +307,7 @@ struct NetworkSection: View {
                             speed.start()
                         } label: {
                             Label(speed.downloadMbps == nil ? l10n.s.speedTestRun : l10n.s.speedTestAgain,
-                                  systemImage: "gauge.with.dots.needle.67percent")
+                                  systemImage: "gauge")
                                 .font(.system(size: 11))
                         }
                         .buttonStyle(.bordered)

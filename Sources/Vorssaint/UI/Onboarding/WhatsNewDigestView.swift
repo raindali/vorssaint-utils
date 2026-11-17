@@ -57,13 +57,13 @@ struct WhatsNewDigestView: View {
         // The columns stay as they are, so a sidebar button would do nothing.
         // Removed here, on the split view: on the sidebar it also drops the
         // column width.
-        .toolbar(removing: .sidebarToggle)
+        .toolbarRemovingSidebarToggleCompat()
         .frame(width: size.width, height: size.height)
         .onExitCommand(perform: onFinish)
-        .onChange(of: selection) { _, selected in
+        .onChangeCompat(of: selection) { _, selected in
             if case .row(let id) = selected { unread.remove(id) }
         }
-        .onChange(of: l10n.language) { _, _ in titles = retitle() }
+        .onChangeCompat(of: l10n.language) { _, _ in titles = retitle() }
     }
 
     private func title(of row: WhatsNewRow) -> String { titles[row.id] ?? row.title }
@@ -87,7 +87,7 @@ struct WhatsNewDigestView: View {
             if !sections.notInstalled.isEmpty {
                 // Collapsed until asked for. The sidebar's own disclosure,
                 // unlike a header button, also opens from VoiceOver.
-                Section(isExpanded: $showsNotInstalled) {
+                CollapsibleSectionCompat(isExpanded: $showsNotInstalled) {
                     ForEach(sections.notInstalled) { sidebarRow($0, installed: false) }
                 } header: {
                     Text(text.notInstalled)

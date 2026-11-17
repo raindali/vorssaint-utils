@@ -100,6 +100,12 @@ final class UpdateService: ObservableObject {
     // MARK: - Check
 
     func check(manual: Bool) {
+        #if arch(x86_64)
+        // Local macOS 13 / Intel port: upstream assets are arm64-only.
+        state = .upToDate
+        lastChecked = Date()
+        return
+        #endif
         if AppInfo.isDeveloperBuild {
             // No real update target; reflect the simulation default so the
             // notification UI can be exercised locally.
