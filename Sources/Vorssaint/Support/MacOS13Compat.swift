@@ -508,10 +508,35 @@ enum ScreenshotCompat {
 // MARK: - Port diagnostics
 
 enum MacOS13Diagnostics {
+    private static func shareableContent() async -> SCShareableContent? {
+        await withCheckedContinuation { continuation in
+            let lock = NSLock()
+            var finished = false
+            func finish(_ value: SCShareableContent?) {
+                lock.lock()
+                if finished { lock.unlock(); return }
+                finished = true
+                lock.unlock()
+                continuation.resume(returning: value)
+            }
+            SCShareableContent.getExcludingDesktopWindows(false, onScreenWindowsOnly: true) { content, _ in
+                finish(content)
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 6) { finish(nil) }
+        }
+    }
+
     static func captureMainDisplay() async -> String {
-        guard let content = try? await SCShareableContent.excludingDesktopWindows(
-                false, onScreenWindowsOnly: true),
-              let display = content.displays.first else { return "no display" }
+        let requested = CGRequestScreenCaptureAccess()
+        let preflight = CGPreflightScreenCaptureAccess()
+        try? "preflight=\(preflight) requested=\(requested)"
+            .write(toFile: "/tmp/vorssaint-preflight.txt", atomically: true, encoding: .utf8)
+        guard let content = await shareableContent() else {
+            return "preflight=\(preflight) content timeout"
+        }
+        guard let display = content.displays.first else {
+            return "preflight=\(preflight) no display"
+        }
         let filter = SCContentFilter(display: display, excludingWindows: [])
         let configuration = SCStreamConfiguration()
         configuration.width = display.width
@@ -519,7 +544,29 @@ enum MacOS13Diagnostics {
         configuration.showsCursor = false
         guard let image = await ScreenshotCompat.captureImage(contentFilter: filter,
                                                               configuration: configuration)
-        else { return "capture nil" }
-        return "capture \(image.width)x\(image.height)"
+        else { return "preflight=\(preflight) capture nil" }
+        return "preflight=\(preflight) capture \(image.width)x\(image.height)"
+    }
+
+    static func captureFirstWindow() async -> String {
+        let requested = CGRequestScreenCaptureAccess()
+        let preflight = CGPreflightScreenCaptureAccess()
+        guard let content = await shareableContent() else {
+            return "preflight=\(preflight) requested=\(requested) content timeout"
+        }
+        let ownID = Bundle.main.bundleIdentifier
+        guard let window = content.windows.first(where: {
+            $0.frame.width > 100 && $0.frame.height > 100
+                && $0.owningApplication?.bundleIdentifier != ownID
+        }) else { return "preflight=\(preflight) no window" }
+        let filter = SCContentFilter(desktopIndependentWindow: window)
+        let configuration = SCStreamConfiguration()
+        configuration.width = Int(window.frame.width)
+        configuration.height = Int(window.frame.height)
+        configuration.showsCursor = false
+        guard let image = await ScreenshotCompat.captureImage(contentFilter: filter,
+                                                              configuration: configuration)
+        else { return "preflight=\(preflight) capture nil" }
+        return "preflight=\(preflight) window \(image.width)x\(image.height)"
     }
 }

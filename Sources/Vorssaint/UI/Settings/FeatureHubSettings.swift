@@ -25,9 +25,26 @@ struct FeatureHubSettings: View {
     /// on it, mirroring the section highlight `SettingsSectionFocusModifier`
     /// gives an ordinary page anchor.
     @State private var highlightedFeature: AppFeature?
-    @State private var expandedGroups = Set(FeatureGroup.allCases)
-    @State private var islandExtensionsExpanded = true
-    @State private var presetsExpanded = true
+    @State private var expandedGroups = FeatureHubSettings.initialExpandedGroups
+    @State private var islandExtensionsExpanded = FeatureHubSettings.initialExtensionsExpanded
+    @State private var presetsExpanded = FeatureHubSettings.initialPresetsExpanded
+
+    /// macOS 13 on older Intel Macs builds every row eagerly; start with the
+    /// group headers only and let a group build its rows when opened.
+    private static var initialExpandedGroups: Set<FeatureGroup> {
+        if #available(macOS 14.0, *) { return Set(FeatureGroup.allCases) }
+        return []
+    }
+
+    private static var initialExtensionsExpanded: Bool {
+        if #available(macOS 14.0, *) { return true }
+        return false
+    }
+
+    private static var initialPresetsExpanded: Bool {
+        if #available(macOS 14.0, *) { return true }
+        return false
+    }
     /// Installed switches never once turned on, read when the page appears
     /// and after every install change rather than on every redraw.
     @State private var neverUsed: [AppFeature] = []
@@ -357,7 +374,7 @@ struct FeatureHubSettings: View {
                 isExpanded: $islandExtensionsExpanded
             ) {
                 if islandExtensionsExpanded {
-                    VStack(spacing: 0) {
+                    LazyVStack(spacing: 0) {
                         ForEach(members.filter { $0 != .notch }, id: \.self) { feature in
                             FeatureHubRow(feature: feature, hub: hub,
                                           isHighlighted: highlightedFeature == feature)
@@ -387,7 +404,7 @@ struct FeatureHubSettings: View {
                 }
             )) {
                 if expandedGroups.contains(group) {
-                    VStack(spacing: 0) {
+                    LazyVStack(spacing: 0) {
                         ForEach(members, id: \.self) { feature in
                             FeatureHubRow(
                                 feature: feature,
@@ -1108,7 +1125,8 @@ private struct PermissionPortalRow: View {
         case .fullDiskAccess: Permissions.shared.openFullDiskAccessSettings()
         case .filesAndFolders: Permissions.shared.openFilesAndFoldersSettings()
         case .notifications: Permissions.shared.openNotificationSettings()
-        case .automationFinder, .automationPlayback: Permissions.shared.openAutomationSettings()
+        case .automationFinder: Permissions.shared.requestAutomationAccess(for: .finder)
+        case .automationPlayback: Permissions.shared.requestAutomationAccess(for: .music)
         case .audioCapture: Permissions.shared.openAudioCaptureSettings()
         case .microphone: Permissions.shared.openMicrophoneSettings()
         case .calendar: Permissions.shared.openCalendarSettings()
