@@ -422,10 +422,23 @@ final class Permissions: ObservableObject {
 
     enum AutomationTarget: String, CaseIterable {
         case finder = "com.apple.finder"
+        case music = "com.apple.Music"
     }
 
     enum AutomationStatus {
         case granted, denied, undetermined, notDeterminable
+    }
+
+    /// Requests the system Automation consent for `target`, then opens the
+    /// Automation pane. The pane only lists apps that have actually asked, so
+    /// opening it alone leaves Vorssaint missing from the list.
+    func requestAutomationAccess(for target: AutomationTarget) {
+        DispatchQueue.global(qos: .userInitiated).async {
+            _ = AppleScriptRunner.consentToAutomate(bundleID: target.rawValue)
+            DispatchQueue.main.async {
+                self.openAutomationSettings()
+            }
+        }
     }
 
     /// Never prompts (askUserIfNeeded false). A target that is not running
