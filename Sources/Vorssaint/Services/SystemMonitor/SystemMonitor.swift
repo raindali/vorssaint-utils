@@ -1075,6 +1075,7 @@ final class SystemMonitor: ObservableObject {
             TemperatureSensorSelector.isCPUTemperatureKey(name, platform: cpuTemperaturePlatform)
                 || name.hasPrefix("Tg")
                 || name.hasPrefix("TG")
+                || name == "TCGC"
                 || name.range(of: "^TB[0-9]T$", options: .regularExpression) != nil
         }
         cpuKeys = all.filter {

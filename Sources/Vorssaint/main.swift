@@ -23,12 +23,52 @@ if CommandLine.arguments.contains("--sensors") {
     SensorDump.runAndExit()
 }
 if CommandLine.arguments.contains("--capture-test") {
+    _ = NSApplication.shared
+    NSApp.setActivationPolicy(.accessory)
     Task {
         let result = await MacOS13Diagnostics.captureMainDisplay()
+        try? result.write(toFile: "/tmp/vorssaint-capture-test.txt", atomically: true, encoding: .utf8)
         print(result)
         exit(result.hasPrefix("capture ") ? 0 : 1)
     }
     RunLoop.main.run()
+}
+if CommandLine.arguments.contains("--window-test") {
+    _ = NSApplication.shared
+    NSApp.setActivationPolicy(.accessory)
+    Task {
+        let result = await MacOS13Diagnostics.captureFirstWindow()
+        try? result.write(toFile: "/tmp/vorssaint-window-test.txt", atomically: true, encoding: .utf8)
+        print(result)
+        exit(result.hasPrefix("window ") ? 0 : 1)
+    }
+    RunLoop.main.run()
+}
+if CommandLine.arguments.contains("--monitor-test") {
+    _ = NSApplication.shared
+    NSApp.setActivationPolicy(.accessory)
+    FeatureRuntime.shared.syncAtLaunch()
+    SystemMonitor.shared.setMenuPanelNeeds(
+        SystemMonitorPanelNeeds(gpu: true, gpuTemperature: true, batteryTemperature: true))
+    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+        let snapshot = SystemMonitor.shared.snapshot
+        let result = "cpu=\(String(describing: snapshot.cpuTemperature)) "
+            + "gpu=\(String(describing: snapshot.gpuTemperature)) "
+            + "battery=\(String(describing: snapshot.batteryTemperature))"
+        try? result.write(toFile: "/tmp/vorssaint-monitor-test.txt", atomically: true, encoding: .utf8)
+        print(result)
+        exit(0)
+    }
+    RunLoop.main.run()
+}
+if CommandLine.arguments.contains("--permissions-test") {
+    _ = NSApplication.shared
+    let ax = AXIsProcessTrusted()
+    let screen = CGPreflightScreenCaptureAccess()
+    let result = "accessibility=\(ax) screenRecording=\(screen)"
+    try? result.write(toFile: "/tmp/vorssaint-permissions-test.txt", atomically: true, encoding: .utf8)
+    print(result)
+    exit(0)
 }
 if CommandLine.arguments.contains("--clipboard-test") {
     FeatureRuntime.shared.syncAtLaunch()
