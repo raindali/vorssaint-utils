@@ -2,6 +2,7 @@
 // Copyright (C) 2026 Vorssaint
 
 import AppKit
+import Combine
 import SwiftUI
 
 /// The Features hub. Install or uninstall each feature, grouped in plain
@@ -896,12 +897,24 @@ struct PermissionsPortalSections: View {
         self.visiblePermissions = visiblePermissions
     }
 
+    /// System audio capture has no public status API on macOS 13 and the
+    /// mixer itself is unsupported there; omit the row instead of showing
+    /// "cannot check".
+    private var effectivePermissions: [AppPermission] {
+        visiblePermissions.filter { permission in
+            if permission == .audioCapture, !AppVolumeMixer.isSupported { return false }
+            return true
+        }
+    }
+
+    @State private var refreshTimer = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
+
     var body: some View {
-        ForEach(visiblePermissions, id: \.self) { permission in
+        ForEach(effectivePermissions, id: \.self) { permission in
             PermissionPortalRow(permission: permission,
                                 hub: hub,
                                 status: status(for: permission))
-            if permission != visiblePermissions.last {
+            if permission != effectivePermissions.last {
                 Divider().padding(.leading, 42)
             }
         }
@@ -914,15 +927,24 @@ struct PermissionsPortalSections: View {
                 || visiblePermissions.contains(.screenRecording) {
                 permissions.setActivePermissionSurface(pollingDemandID, visible: true)
             }
-            DispatchQueue.global(qos: .userInitiated).async {
-                let finder = Permissions.automationStatus(for: .finder)
-                DispatchQueue.main.async {
-                    automation = [.finder: finder]
-                }
-            }
+            refreshAutomationStatuses()
+        }
+        .onReceive(refreshTimer) { _ in
+            permissions.refreshPortalStatuses()
+            refreshAutomationStatuses()
         }
         .onDisappear {
             permissions.setActivePermissionSurface(pollingDemandID, visible: false)
+        }
+    }
+
+    private func refreshAutomationStatuses() {
+        DispatchQueue.global(qos: .userInitiated).async {
+            let finder = Permissions.automationStatus(for: .finder)
+            let music = Permissions.automationStatus(for: .music)
+            DispatchQueue.main.async {
+                automation = [.finder: finder, .music: music]
+            }
         }
     }
 
@@ -948,7 +970,7 @@ struct PermissionsPortalSections: View {
             case .unknown: return .unknown
             }
         case .automationFinder: return automationStatus(.finder)
-        case .automationPlayback: return .unknown
+        case .automationPlayback: return automationStatus(.music)
         case .audioCapture:
             // No public check exists for system audio capture; the mixer
             // reports a failed tap, which is the one readable signal.
@@ -1129,7 +1151,7 @@ private struct PermissionPortalRow: View {
         case .automationPlayback: Permissions.shared.requestAutomationAccess(for: .music)
         case .audioCapture: Permissions.shared.openAudioCaptureSettings()
         case .microphone: Permissions.shared.openMicrophoneSettings()
-        case .calendar: Permissions.shared.openCalendarSettings()
+        case .calendar: Permissions.shared.requestCalendarAccessAndOpenSettings()
         case .camera: Permissions.shared.openCameraSettings()
         case .appManagement: Permissions.shared.openAppManagementSettings()
         }

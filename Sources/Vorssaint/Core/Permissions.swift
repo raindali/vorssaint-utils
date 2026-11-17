@@ -149,6 +149,18 @@ final class Permissions: ObservableObject {
         }
     }
 
+    /// Refresh the statuses a visible permissions portal shows without
+    /// doing the Full Disk Access probe or re-asking notifications.
+    func refreshPortalStatuses() {
+        refreshActivePermissions()
+        refreshCameraPermission()
+        refreshMicrophonePermission()
+        let status = EKEventStore.authorizationStatus(for: .event)
+        DispatchQueue.main.async {
+            if self.calendarAccess != status { self.calendarAccess = status }
+        }
+    }
+
     private func refreshCameraPermission() {
         let state: CameraPermissionState
         switch AVCaptureDevice.authorizationStatus(for: .video) {
@@ -358,6 +370,23 @@ final class Permissions: ObservableObject {
                 let status = EKEventStore.authorizationStatus(for: .event)
                 self?.calendarRequestFailed = NotchCalendarSupport.requestFailed(status: status, hasError: error != nil)
                 self?.calendarAccess = status
+            }
+        }
+    }
+
+    /// Requests Calendar access first; the Calendar list only shows apps that
+    /// have actually asked. Then opens the pane, granted or not.
+    func requestCalendarAccessAndOpenSettings() {
+        if CalendarAccessCompat.currentIsGranted {
+            openCalendarSettings()
+            return
+        }
+        let store = EKEventStore()
+        CalendarAccessCompat.requestFullAccess(store: store) { [weak self] _, _ in
+            DispatchQueue.main.async {
+                self?.calendarAccess = EKEventStore.authorizationStatus(for: .event)
+                self?.calendarPermissionResolution = ProcessInfo.processInfo.systemUptime
+                self?.openCalendarSettings()
             }
         }
     }
