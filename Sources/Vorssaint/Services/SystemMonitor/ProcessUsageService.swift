@@ -215,7 +215,7 @@ final class ProcessUsageService {
               let app = NSRunningApplication(processIdentifier: row.pid)
         else { return }
         ActivationHandoff.yield(to: app)
-        if !app.activate(from: NSRunningApplication.current, options: []) {
+        if !AppActivationCompat.activate(app, from: .current, options: []) {
             app.activate(options: [])
         }
     }

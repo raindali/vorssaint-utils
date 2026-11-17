@@ -2590,10 +2590,10 @@ enum Defaults {
         "drop.fill", "snowflake", "sun.max.fill", "moon.stars.fill", "cloud.fill", "mountain.2.fill",
         "circle.fill", "square.fill", "triangle.fill", "diamond.fill", "hexagon.fill", "seal.fill",
         "circle.lefthalf.filled", "circle.hexagongrid.fill", "infinity",
-        "command", "cpu.fill", "memorychip.fill", "gauge.with.dots.needle.67percent",
+        "command", "cpu.fill", "memorychip.fill", "gauge",
         "fanblades.fill", "gearshape.fill", "terminal.fill", "waveform",
         "wand.and.stars", "key.fill", "crown.fill", "gamecontroller.fill", "headphones",
-        "music.note", "paperplane.fill", "pawprint.fill", "cat.fill", "hare.fill", "tortoise.fill",
+        "music.note", "paperplane.fill", "pawprint.fill", "pawprint.fill", "hare.fill", "tortoise.fill",
     ]
 
     static func sanitizedMonitorInterval(_ seconds: Int) -> Int {

@@ -382,7 +382,7 @@ private struct QuitAppsView: View {
                 .padding(.horizontal, 8)
             }
             .frame(height: Self.rowHeight * CGFloat(min(model.rows.count, Self.visibleRows)))
-            .onChange(of: model.focus) { _, focus in
+            .onChangeCompat(of: model.focus) { _, focus in
                 if case .row(let pid) = focus { proxy.scrollTo(pid) }
             }
         }

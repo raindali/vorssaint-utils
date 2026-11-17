@@ -218,7 +218,7 @@ struct SwitcherView: View {
                 guard switcher.windows.indices.contains(switcher.selectedIndex) else { return }
                 proxy.scrollTo(switcher.windows[switcher.selectedIndex].id, anchor: nil)
             }
-            .onChange(of: switcher.selectedIndex) { _, newIndex in
+            .onChangeCompat(of: switcher.selectedIndex) { _, newIndex in
                 guard switcher.windows.indices.contains(newIndex) else { return }
                 withAnimation(instantSelection ? nil : .easeOut(duration: 0.15)) {
                     proxy.scrollTo(switcher.windows[newIndex].id, anchor: nil)
@@ -370,10 +370,10 @@ struct SwitcherView: View {
                         .frame(width: switcher.iconRowLayout.previewContentWidth,
                                height: SwitcherIconRowLayout.previewCardHeight)
                         .onAppear { revealSelection(in: proxy, animated: false) }
-                        .onChange(of: switcher.selectedIndex) { _, _ in
+                        .onChangeCompat(of: switcher.selectedIndex) { _, _ in
                             revealSelection(in: proxy, animated: true)
                         }
-                        .onChange(of: appWindows.map(\.element.id)) { _, _ in
+                        .onChangeCompat(of: appWindows.map(\.element.id)) { _, _ in
                             revealSelection(in: proxy, animated: true)
                         }
                         .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { _ in
@@ -458,10 +458,10 @@ struct SwitcherView: View {
                         .padding(.horizontal, SwitcherIconRowLayout.simpleTitleScrollPadding)
                     }
                     .onAppear { revealSelection(in: proxy, animated: false) }
-                    .onChange(of: switcher.selectedIndex) { _, _ in
+                    .onChangeCompat(of: switcher.selectedIndex) { _, _ in
                         revealSelection(in: proxy, animated: true)
                     }
-                    .onChange(of: appWindows.map(\.element.id)) { _, _ in
+                    .onChangeCompat(of: appWindows.map(\.element.id)) { _, _ in
                         revealSelection(in: proxy, animated: true)
                     }
                     .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { _ in
@@ -612,10 +612,10 @@ struct SwitcherView: View {
             .onAppear { revealSelectedIcon(in: proxy, animated: false) }
             // Follow the selected icon rather than the index: a search can keep
             // the index while the item under it, and so its row, changes.
-            .onChange(of: selectedIconScrollID) { _, _ in
+            .onChangeCompat(of: selectedIconScrollID) { _, _ in
                 revealSelectedIcon(in: proxy, animated: true)
             }
-            .onChange(of: layout.rows) { _, _ in
+            .onChangeCompat(of: layout.rows) { _, _ in
                 revealSelectedIcon(in: proxy, animated: false)
             }
         }

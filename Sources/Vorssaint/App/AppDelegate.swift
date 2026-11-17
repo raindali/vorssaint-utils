@@ -489,7 +489,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
         // the arrow, while its controls stay inside the safe area. Older AppKit
         // versions misplace full-size content, so keep the inset layout and let
         // the popover draw its native material and corners there.
-        popover.hasFullSizeContent = PanelSurface.popoverHostsFullSizeContent
+        PanelSurfaceCompat.setPopoverFullSizeContent(popover, PanelSurface.popoverHostsFullSizeContent)
         popover.delegate = self
         let host = NSHostingController(rootView: MenuPanelView())
         host.sizingOptions = .preferredContentSize
@@ -1544,7 +1544,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
                   !self.handbackWouldSwitchDesktop(to: source.processIdentifier)
             else { return }
             ActivationHandoff.yield(to: source)
-            if !source.activate(from: NSRunningApplication.current, options: []) {
+            if !AppActivationCompat.activate(source, from: .current, options: []) {
                 source.activate(options: [])
             }
         }

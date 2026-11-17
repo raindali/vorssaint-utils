@@ -81,7 +81,7 @@ private struct HomebrewOperationStatusView: View {
                 technicalLog
             }
         }
-        .onChange(of: status.result, initial: true) { _, result in
+        .onChangeCompat(of: status.result, initial: true) { _, result in
             if result == .failed || result == .needsTerminal { showDetails = true }
         }
     }

@@ -70,7 +70,7 @@ struct NotchMixerView: View {
         })
         .onAppear { mixer.refreshApps() }
         // Escape closes the options before the island.
-        .onChange(of: showingOptions) { _, showing in
+        .onChangeCompat(of: showingOptions) { _, showing in
             guard !preview else { return }
             NotchService.shared.setPageLayer(.mixer, close: showing ? closeOptions : nil)
         }
@@ -214,7 +214,7 @@ private struct NotchMasterFader: View {
                 Image(systemName: muted ? "speaker.slash.fill" : "speaker.wave.2.fill")
                     .font(.system(size: 15, weight: .medium))
                     .foregroundStyle(muted ? Color.red : Color.white)
-                    .contentTransition(.symbolEffect(.replace))
+                    .contentTransitionSymbolReplaceCompat()
                     .animation(reduceMotion ? nil : .smooth(duration: 0.24), value: muted)
                     .frame(width: 32, height: 32)
                     .contentShape(Circle())
@@ -285,7 +285,7 @@ private struct NotchMicrophoneFader: View {
     private func icon(muted: Bool) -> some View {
         Image(systemName: muted ? "mic.slash.fill" : "mic.fill")
             .font(.system(size: 15, weight: .medium))
-            .contentTransition(.symbolEffect(.replace))
+            .contentTransitionSymbolReplaceCompat()
             .animation(reduceMotion ? nil : .smooth(duration: 0.24), value: muted)
             .frame(width: 32, height: 32)
             .contentShape(Circle())

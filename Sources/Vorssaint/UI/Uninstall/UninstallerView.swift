@@ -83,7 +83,7 @@ struct UninstallerView: View {
             }
             Section {
                 Toggle(l10n.s.uninstallerWatchTrashToggle, isOn: $watchesTrash)
-                    .onChange(of: watchesTrash) { _, _ in TrashAppWatcher.shared.syncWithPreferences() }
+                    .onChangeCompat(of: watchesTrash) { _, _ in TrashAppWatcher.shared.syncWithPreferences() }
                 Text(l10n.s.uninstallerWatchTrashCaption)
                     .font(.caption)
                     .foregroundStyle(.secondary)

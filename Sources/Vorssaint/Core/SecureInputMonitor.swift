@@ -72,7 +72,7 @@ final class SecureInputMonitor: ObservableObject {
         guard case .app(_, let pid) = holder,
               let app = NSRunningApplication(processIdentifier: pid) else { return }
         ActivationHandoff.yield(to: app)
-        if !app.activate(from: NSRunningApplication.current, options: []) {
+        if !AppActivationCompat.activate(app, from: .current, options: []) {
             app.activate(options: [])
         }
     }

@@ -59,8 +59,8 @@ struct ClaudeAccountSettings: View {
                 .font(.caption)
         }
         .onAppear { refresh() }
-        .onChange(of: selected) { _, _ in refresh() }
-        .onChange(of: usage.claudeAccountIdentity) { _, _ in refresh() }
+        .onChangeCompat(of: selected) { _, _ in refresh() }
+        .onChangeCompat(of: usage.claudeAccountIdentity) { _, _ in refresh() }
         .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in refresh() }
         .onDisappear { readID = UUID() }
         .alert(text.title, isPresented: $invalidFolder) {

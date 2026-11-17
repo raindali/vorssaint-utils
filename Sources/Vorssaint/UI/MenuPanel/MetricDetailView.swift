@@ -177,7 +177,7 @@ struct MetricDetailView: View {
             }
             refreshProcessRows(force: true, delay: 0.2)
         }
-        .onChange(of: kind) { oldKind, newKind in
+        .onChangeCompat(of: kind) { oldKind, newKind in
             if oldKind == .network, newKind != .network {
                 stopNetworkMonitoringIfNeeded()
             } else if oldKind != .network, newKind == .network {
@@ -317,7 +317,7 @@ struct MetricDetailView: View {
                         speed.start()
                     } label: {
                         Label(speed.downloadMbps == nil ? l10n.s.speedTestRun : l10n.s.speedTestAgain,
-                              systemImage: "gauge.with.dots.needle.67percent")
+                              systemImage: "gauge")
                             .font(.system(size: 11))
                     }
                     .buttonStyle(.bordered)
