@@ -1,3 +1,8 @@
+> **Unofficial macOS 13 / Intel source port.** This branch is a personal-use
+> source derivative of Vorssaint, not an official release. It is not affiliated
+> with or endorsed by the upstream project. See [PORTING.md](PORTING.md) for
+> build steps, changes and limitations.
+
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/assets/readme/logo-dark.svg">
