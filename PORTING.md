@@ -55,6 +55,30 @@ macOS 13.3. For stable TCC permissions across rebuilds, run
 - Dynamic Island features are intended for notched Macs; they can be disabled.
 - Automatic updates are disabled.
 
+## Keeping up with upstream
+
+The fork's `main` mirrors the upstream default branch and is never modified.
+All porting work lives on `macos13-intel`.
+
+As of 2026-11-19 the branch is based on upstream `faada18`; the original port
+started from `89d2626`, and 22 upstream commits were brought in by rebase.
+
+Sync procedure:
+
+```sh
+# origin points at the upstream repository in this checkout; on a fork clone
+# use UPSTREAM_REMOTE=upstream.
+git fetch origin main
+git rebase origin/main macos13-intel
+./build.sh
+git push --force-with-lease <fork-remote> macos13-intel
+```
+
+`Tools/sync-upstream.sh` runs the fetch, rebase and build in one step and
+prints the push command. Conflicts are expected only in files both sides
+touched; keep the macOS 13 compatibility layer and re-run `./build.sh` plus
+the diagnostics afterwards.
+
 ## Diagnostics
 
 The app accepts a few hidden flags:
