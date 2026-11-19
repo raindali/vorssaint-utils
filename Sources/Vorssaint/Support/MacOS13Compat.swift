@@ -149,7 +149,7 @@ extension View {
     @ViewBuilder
     func coordinateSpaceNamedCompat(_ name: String) -> some View {
         if #available(macOS 14.0, *) {
-            self.coordinateSpaceNamedCompat(name)
+            self.coordinateSpace(.named(name))
         } else {
             self.coordinateSpace(name: name)
         }
@@ -496,8 +496,8 @@ enum ScreenshotCompat {
     static func captureImage(contentFilter: SCContentFilter,
                              configuration: SCStreamConfiguration) async -> CGImage? {
         if #available(macOS 14.0, *) {
-            return await ScreenshotCompat.captureImage(contentFilter: contentFilter,
-                                                               configuration: configuration)
+            return try? await SCScreenshotManager.captureImage(contentFilter: contentFilter,
+                                                              configuration: configuration)
         }
         return await SCStreamFrameCapture.capture(filter: contentFilter,
                                                   configuration: configuration)
