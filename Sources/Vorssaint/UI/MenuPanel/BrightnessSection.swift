@@ -228,7 +228,7 @@ struct MonitorSpeakerVolumeRow: View {
                 .fixedSize()
                 .frame(minWidth: compact ? 30 : 52, alignment: .trailing)
         }
-        .onChange(of: audio.target) { _, _ in feedback.cancel() }
+        .onChangeCompat(of: audio.target) { _, _ in feedback.cancel() }
         .onDisappear { feedback.cancel() }
     }
 }

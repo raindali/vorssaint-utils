@@ -163,7 +163,7 @@ struct QuickToolsSettings: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                     Toggle(l10n.s.micMuteFollowCallAppsToggle, isOn: $micFollowCallApps)
-                        .onChange(of: micFollowCallApps) { _, _ in
+                        .onChangeCompat(of: micFollowCallApps) { _, _ in
                             micMute.syncWithPreferences()
                         }
                     Text(l10n.s.micMuteFollowCallAppsCaption)
